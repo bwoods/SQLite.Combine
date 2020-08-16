@@ -2,7 +2,8 @@ import XCTest
 import SQLite3
 @testable import SQLite_Combine
 
-final class SQLite_CombineTests: XCTestCase {
+
+class SQLite_CombineTests: XCTestCase {
 	func testCompilationOptions() {
 		let options = Set<String>(
 			(0...).lazy
@@ -33,10 +34,6 @@ final class SQLite_CombineTests: XCTestCase {
 		XCTAssertTrue(tables.count == 1)
 		XCTAssertEqual(tables.first!, "check")
     }
-
-    static var allTests = [
-        ("testCompilationOptions", testCompilationOptions),
-    ]
 
 }
 

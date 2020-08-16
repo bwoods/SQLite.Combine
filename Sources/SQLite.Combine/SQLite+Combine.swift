@@ -5,7 +5,7 @@ import Dispatch
 
 public extension SQLite {
 
-	func publish<Output: Decodable>(_ sql: String, as type: Output.Type, with bindings: SQLiteBindable...) -> Publisher<Output> {
+	func publish<Output: Decodable>(_ sql: String, as type: Output.Type, with bindings: SQLiteableValue...) -> Publisher<Output> {
 			Publisher<Output>(self, sql: sql, bindings: bindings)
 	}
 
@@ -33,11 +33,11 @@ public extension SQLite {
 		}
 
 		private let sql: String
-		private let bindings: [SQLiteBindable]?
+		private let bindings: [SQLiteableValue]?
 		private weak var db: SQLite?
 		private var dependencies: [String]?
 
-		fileprivate init(_ db: SQLite, sql: String, bindings: [SQLiteBindable]?) {
+		fileprivate init(_ db: SQLite, sql: String, bindings: [SQLiteableValue]?) {
 			self.db = db
 			self.sql = sql
 			self.bindings = bindings
@@ -52,11 +52,11 @@ private extension SQLite.Publisher {
 		private var subscriber: S
 		weak var db: SQLite?
 
-		init(_ db: SQLite, _ sql: String, _ bindings: [SQLiteBindable]?, _ subscriber: S, explicit dependencies: [String]? = nil) {
+		init(_ db: SQLite, _ sql: String, _ bindings: [SQLiteableValue]?, _ subscriber: S, explicit dependencies: [String]? = nil) {
 			self.subscriber = subscriber
 			self.db = db
 
-			try! super.init(db, sql: sql, bindings: bindings ?? [ ])
+			super.init(db, sql: sql, values: bindings ?? [ ])
 
 			db.add(subscription: self, for: self.stmt.pointer, explicit: dependencies) { [weak self] in
 				self?.request(Subscribers.Demand.max(1))
