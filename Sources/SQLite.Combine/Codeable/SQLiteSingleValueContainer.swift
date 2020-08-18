@@ -90,7 +90,7 @@ extension SQLiteSingleValue: SingleValueDecodingContainer {
 		case is Int.Type: return Int.column(stmt, column: column) as! T
 		case is Int8.Type: return Int.column(stmt, column: column) as! T
 		case is Int16.Type: return Int.column(stmt, column: column) as! T
-		case is Int32.Type: return Int.column(stmt, column: column) as! T
+		case is Int32.Type: return Int64.column(stmt, column: column) as! T
 		case is Int64.Type: return Int64.column(stmt, column: column) as! T
 		case is UInt.Type: return Int64.column(stmt, column: column) as! T
 		case is UInt8.Type: return Int.column(stmt, column: column) as! T
@@ -100,6 +100,21 @@ extension SQLiteSingleValue: SingleValueDecodingContainer {
 
 		case is Data.Type: return Data.column(stmt, column: column) as! T
 		case is Date.Type: return Date.column(stmt, column: column) as! T
+
+		case is Published<Bool>.Type: return Published<Bool>(initialValue: Bool.column(stmt, column: column)) as! T
+		case is Published<String>.Type: return Published<String>(initialValue: String.column(stmt, column: column)) as! T
+		case is Published<Double>.Type: return Published<Double>(initialValue: Double.column(stmt, column: column)) as! T
+		case is Published<Float>.Type: return Published<Float>(initialValue: Float.column(stmt, column: column)) as! T
+		case is Published<Int>.Type: return Published<Int>(initialValue: Int.column(stmt, column: column)) as! T
+		case is Published<Int8>.Type: return Published<Int8>(initialValue: Int8(Int.column(stmt, column: column))) as! T
+		case is Published<Int16>.Type: return Published<Int16>(initialValue: Int16(Int.column(stmt, column: column))) as! T
+		case is Published<Int32>.Type: return Published<Int32>(initialValue: Int32(Int.column(stmt, column: column))) as! T
+		case is Published<Int64>.Type: return Published<Int64>(initialValue: Int64.column(stmt, column: column)) as! T
+		case is Published<UInt>.Type: return Published<UInt>(initialValue: UInt(Int64.column(stmt, column: column))) as! T
+		case is Published<UInt8>.Type: return Published<UInt8>(initialValue: UInt8(Int.column(stmt, column: column))) as! T
+		case is Published<UInt16>.Type: return Published<UInt16>(initialValue: UInt16(Int.column(stmt, column: column))) as! T
+		case is Published<UInt32>.Type: return Published<UInt32>(initialValue: UInt32(Int64.column(stmt, column: column))) as! T
+		case is Published<UInt64>.Type: return Published<UInt64>(initialValue: UInt64(Int64.column(stmt, column: column))) as! T
 
 		default:
 			let data = Data.column(stmt, column: column)
