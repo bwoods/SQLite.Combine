@@ -33,15 +33,15 @@ public class SQLiteDecoder {
 	}
 
 // MARK: -
-	convenience init(_ db: SQLite, sql: String) {
+	public convenience init(_ db: SQLite, sql: String) {
 		self.init(db, sql: sql, values: [ ])
 	}
 
-	convenience init(_ db: SQLite, sql: String, with bindings: SQLiteableValue...) {
+	public convenience init(_ db: SQLite, sql: String, with bindings: SQLiteableValue...) {
 		self.init(db, sql: sql, values: bindings)
 	}
 
-	init(_ db: SQLite, sql: String, values bindings: [SQLiteableValue]) {
+	public init(_ db: SQLite, sql: String, values bindings: [SQLiteableValue]) {
 		var stmt = OpaquePointer(bitPattern: 0)
 		if sqlite3_prepare_v2(db.pointer, sql, -1, &stmt, nil) != SQLITE_OK {
 			fatalError(String(cString: sqlite3_errmsg(db.pointer)))

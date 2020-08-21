@@ -24,7 +24,7 @@ final public class SQLiteEncoder {
 // MARK: -
 	var column: Int = 0
 
-	init(_ db: SQLite, sql: String) {
+	public init(_ db: SQLite, sql: String) {
 		var stmt = OpaquePointer(bitPattern: 0)
 		if sqlite3_prepare_v2(db.pointer, sql, -1, &stmt, nil) != SQLITE_OK {
 			fatalError(String(cString: sqlite3_errmsg(db.pointer)))
