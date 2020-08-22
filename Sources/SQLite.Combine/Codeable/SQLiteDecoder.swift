@@ -85,3 +85,12 @@ extension SQLiteDecoder: Decoder {
 
 }
 
+
+extension SQLite {
+
+	public func decode(sql: String, with bindings: SQLiteableValue...) {
+		_ = SQLiteDecoder(self, sql: sql, values: bindings)
+	}
+
+}
+
