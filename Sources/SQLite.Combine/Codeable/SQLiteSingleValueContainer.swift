@@ -178,7 +178,8 @@ extension Data: SQLiteableValue {
 
 extension Date: SQLiteableValue {
 	public static func column(_ stmt: OpaquePointer, column: Int) -> Date {
-		SQLiteSingleValue.dateFormatter.date(from: String(cString: sqlite3_column_text(stmt, numericCast(column))))!
+		let string = String(cString: sqlite3_column_text(stmt, numericCast(column)))
+		return SQLiteSingleValue.dateFormatter.date(from: string) ?? SQLiteSingleValue.dateFormatterAbridged.date(from: string)!
 	}
 
 	public func bind(_ stmt: OpaquePointer, column: Int) {
@@ -190,7 +191,14 @@ extension SQLiteSingleValue {
 
 	fileprivate static var dateFormatter: DateFormatter = {
 		let formatter = DateFormatter()
-		formatter.dateFormat = "yMMddHHmmss.SSS" // see https://nsdateformatter.com
+		formatter.dateFormat = "yyyyMMddHHmmss.SSS" // see https://nsdateformatter.com
+    	formatter.timeZone = TimeZone(secondsFromGMT: 0)
+		return formatter
+	}()
+
+	fileprivate static var dateFormatterAbridged: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "yyyyMMddHHmmss" // the milliseconds (above) can not be made optional
     	formatter.timeZone = TimeZone(secondsFromGMT: 0)
 		return formatter
 	}()
