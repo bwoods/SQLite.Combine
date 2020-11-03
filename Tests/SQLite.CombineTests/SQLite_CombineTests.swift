@@ -21,7 +21,7 @@ class SQLite_CombineTests: XCTestCase {
 
 
     func testSQLiteDecoder() throws {
-        let db = SQLite.temporary()
+        let db = SQLite.memory()
 
 		var tables = try! [String](from: SQLiteDecoder(db, sql: "SELECT name FROM sqlite_master WHERE type == 'table'"))
 		XCTAssertTrue(tables.isEmpty)

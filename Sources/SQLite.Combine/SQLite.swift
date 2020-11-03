@@ -3,7 +3,7 @@ import SQLite3
 
 
 public final class SQLite {
-	var pointer: OpaquePointer
+	public private(set) var pointer: OpaquePointer
 
 	static func error(from db: OpaquePointer, _ supplemental: String = "SQLite failed") -> Error {
 		NSError(domain: "sqlite", code: numericCast(sqlite3_errcode(db)), userInfo: [

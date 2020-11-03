@@ -13,11 +13,16 @@ public extension SQLite {
 	static func temporary() -> SQLite {
 		var components = URLComponents()
 		components.scheme = "file"
-#if UNIT_TESTING
+
+		return self.init(url: components.url!)
+	}
+
+	static func memory() -> SQLite {
+		var components = URLComponents()
+		components.scheme = "file"
 		components.queryItems = [
-			URLQueryItem(name: "mode", value: "memory") // unit tests should be run entirely in memory
+			URLQueryItem(name: "mode", value: "memory")
 		]
-#endif
 
 		return self.init(url: components.url!)
 	}
