@@ -1,6 +1,9 @@
 import SQLite3
+#if os(macOS)
+import AppKit.NSDataAsset
+#elseif os(iOS)
 import UIKit.NSDataAsset
-
+#endif
 
 public extension SQLite {
 

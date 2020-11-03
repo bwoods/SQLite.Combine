@@ -34,7 +34,7 @@ public final class SQLite {
 	}
 
 	private var changes: Set<String> = [ ]
-	private  var subscribers = NSMapTable<AnyObject, Change>.weakToStrongObjects()
+	private var subscribers = NSMapTable<AnyObject, Change>.weakToStrongObjects()
 
 	func add(subscription: AnyObject, for stmt: OpaquePointer, explicit dependencies: [String]? = nil, _ callback: @escaping () -> Void) {
 		let tables = Set(dependencies ?? [ ]).union(
@@ -54,7 +54,7 @@ public final class SQLite {
 
 
 // MARK: -
-	required init(url: URL) {
+	public required init(url: URL) {
 		var pointer: OpaquePointer! = nil
 		if sqlite3_open_v2(url.absoluteString, &pointer, SQLITE_OPEN_FULLMUTEX+SQLITE_OPEN_URI+SQLITE_OPEN_READWRITE+SQLITE_OPEN_CREATE, nil) != SQLITE_OK {
 			fatalError(String(cString: sqlite3_errmsg(pointer)))

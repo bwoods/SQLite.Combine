@@ -1,6 +1,7 @@
-import UIKit
 import SQLite3
 
+#if os(iOS)
+import UIKit
 
 public extension SQLite {
 
@@ -30,3 +31,15 @@ public extension SQLite {
 
 }
 
+#elseif os(macOS)
+import AppKit
+
+public extension SQLite {
+
+	func addObservers() {
+
+	}
+
+}
+
+#endif
