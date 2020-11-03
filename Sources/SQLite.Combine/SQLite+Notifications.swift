@@ -16,7 +16,7 @@ public extension SQLite {
 	}
 
 	fileprivate func respond(to name: NSNotification.Name, with sql: String) {
-		respond(to: UIApplication.didReceiveMemoryWarningNotification) {
+		respond(to: name) {
 			db in sqlite3_exec(db, sql, nil, nil, nil)
 		}
 	}
