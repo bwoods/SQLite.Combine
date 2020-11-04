@@ -2,8 +2,8 @@ import Foundation
 import SQLite3
 
 
-public final class SQLite {
-	public private(set) var pointer: OpaquePointer
+public final class SQLite: ObservableObject {
+	 @Published public private(set) var pointer: OpaquePointer
 
 	static public func error(from db: OpaquePointer, _ supplemental: String = "SQLite failed") -> Error {
 		NSError(domain: "sqlite", code: numericCast(sqlite3_errcode(db)), userInfo: [
@@ -98,9 +98,23 @@ public final class SQLite {
 			return SQLITE_OK
 		}, context)
 	}
+	
+	public func swap(with: SQLite) {
+		Swift.swap(&self.pointer, &with.pointer)
+	}
 
 	deinit {
 		sqlite3_close_v2(pointer)
+/*
+		if sqlite3_close(pointer) == SQLITE_BUSY {
+			var stmt = OpaquePointer(bitPattern: 0)
+			while let next = sqlite3_next_stmt(stmt, stmt) {
+				print("\(sqlite3_expanded_sql(next))")
+				sqlite3_finalize(next)
+				stmt = next
+			}
+		}
+*/
 	}
 
 }

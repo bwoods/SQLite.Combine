@@ -17,9 +17,7 @@ public extension SQLite {
 	}
 
 	fileprivate func respond(to name: NSNotification.Name, with sql: String) {
-		respond(to: name) {
-			db in sqlite3_exec(db, sql, nil, nil, nil)
-		}
+		respond(to: name) { db in sqlite3_exec(db, sql, nil, nil, nil) }
 	}
 
 	func addObservers() {
