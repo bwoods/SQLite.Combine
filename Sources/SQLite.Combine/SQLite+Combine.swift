@@ -24,7 +24,7 @@ public extension SQLite {
 			}
 		}
 
-		/// We can not detect tables used in a subquery. Use this method to add any missing dependencies explicitly.
+		/// We cannot detect tables used in a subquery. Use this method to add any missing dependencies explicitly.
 		/// - Parameter dependencies: a list of tables to add the SQL query’s dependencies
 		func add(dependencies: String...) -> Self {
 			var copy = self

@@ -4,11 +4,11 @@ import SQLite3
 
 struct SQLiteKeyed<Key: CodingKey> {
 	var codingPath: [CodingKey] = [ ]
-	func contains(_ key: Key) -> Bool { return columns[key.stringValue] != nil }
-	var allKeys: [Key] { return columns.keys.map { Key(stringValue: $0)! } }
+	func contains(_ key: Key) -> Bool { columns[key.stringValue] != nil }
+	var allKeys: [Key] { columns.keys.map { Key(stringValue: $0)! } }
 
 	func value(for column: Int) -> SQLiteSingleValue {
-		return SQLiteSingleValue(stmt: stmt, column: column)
+		SQLiteSingleValue(stmt: stmt, column: column)
 	}
 
 	func value(for key: Key) -> SQLiteSingleValue {
@@ -63,7 +63,7 @@ extension SQLiteKeyed: KeyedEncodingContainerProtocol {
 
 extension SQLiteKeyed: KeyedDecodingContainerProtocol {
 
-	func decodeNil(forKey key: Key) throws -> Bool { return columns[key.stringValue] == nil || value(for: key).decodeNil() }
+	func decodeNil(forKey key: Key) throws -> Bool { columns[key.stringValue] == nil || value(for: key).decodeNil() }
 	func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool { try value(for: key).decode(type) }
 	func decode(_ type: String.Type, forKey key: Key) throws -> String { try value(for: key).decode(type) }
 	func decode(_ type: Double.Type, forKey key: Key) throws -> Double { try value(for: key).decode(type) }

@@ -65,7 +65,7 @@ extension SQLiteSingleValue: SingleValueEncodingContainer {
 
 extension SQLiteSingleValue: SingleValueDecodingContainer {
 
-	func decodeNil() -> Bool { return sqlite3_column_type(stmt, numericCast(column)) == SQLITE_NULL }
+	func decodeNil() -> Bool { sqlite3_column_type(stmt, numericCast(column)) == SQLITE_NULL }
 	func decode(_ type: Bool.Type) throws -> Bool { Bool.column(stmt, column: column) }
 	func decode(_ type: String.Type) throws -> String { String.column(stmt, column: column) }
 	func decode(_ type: Double.Type) throws -> Double { Double.column(stmt, column: column) }

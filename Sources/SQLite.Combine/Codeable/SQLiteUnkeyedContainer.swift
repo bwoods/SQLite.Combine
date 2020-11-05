@@ -31,8 +31,8 @@ extension SQLiteUnkeyedEncoder: UnkeyedEncodingContainer {
 		currentIndex += 1
 	}
 
-	mutating func superEncoder() -> Encoder { return SQLiteEncoder(stmt: stmt) }
-	mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer { return self }
+	mutating func superEncoder() -> Encoder {  SQLiteEncoder(stmt: stmt) }
+	mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer { self }
 	mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
 		SQLiteEncoder(stmt: stmt).container(keyedBy: keyType)
 	}
@@ -42,9 +42,9 @@ extension SQLiteUnkeyedEncoder: UnkeyedEncodingContainer {
 
 struct SQLiteUnkeyedDecoder {
 	var codingPath: [CodingKey] = [ ]
-	var isAtEnd: Bool { return status != SQLITE_ROW }
+	var isAtEnd: Bool { status != SQLITE_ROW }
 	var currentIndex: Int = 0
-	var count: Int? { return nil } // we never know until the query returns SQLITE_DONE
+	var count: Int? { nil } // we never know until the query returns SQLITE_DONE
 
 // MARK: -
 	let stmt: OpaquePointer
@@ -72,8 +72,8 @@ extension SQLiteUnkeyedDecoder: UnkeyedDecodingContainer {
 		return try T(from: SQLiteDecoder(stmt: stmt))
 	}
 
-	func superDecoder() throws -> Decoder { return SQLiteDecoder(stmt: stmt) }
-	func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer { return self }
+	func superDecoder() throws -> Decoder { SQLiteDecoder(stmt: stmt) }
+	func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer { self }
 	func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
 		try SQLiteDecoder(stmt: stmt).container(keyedBy: type)
 	}
