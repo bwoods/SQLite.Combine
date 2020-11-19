@@ -102,6 +102,17 @@ public final class SQLite: ObservableObject {
 	public func swap(with: SQLite) {
 		Swift.swap(&self.pointer, &with.pointer)
 	}
+
+	public func backup(to url: URL) throws {
+		let db = SQLite(url: url)
+		guard let backup = sqlite3_backup_init(db.pointer, "main", self.pointer, "main") else {
+			throw SQLite.error(from: db.pointer, "“Save As…” failed")
+		}
+
+		sqlite3_backup_step(backup, -1) // https://sqlite.org/backup.html
+		sqlite3_backup_finish(backup)
+
+	}
 	
 	public func close() {
 		sqlite3_close_v2(pointer)
