@@ -10,7 +10,7 @@ public extension SQLite {
 	func upgrade(schema prefix: String) {
 		// re-establish defaults
 		sqlite3_exec(pointer, "PRAGMA cache_size = 10240", nil, nil, nil) // 10240 × 4 KiB page_size → 40 MiB page cache
-		sqlite3_exec(pointer, "PRAGMA journal_mode=WAL", nil, nil, nil) // must come before the PRAGMA user_version for (some reason) or it has no effect
+		sqlite3_exec(pointer, "PRAGMA journal_mode = WAL", nil, nil, nil) // must come before the PRAGMA user_version (for some reason) or it has no effect
 
 		var version = try! Int(from: SQLiteDecoder(self, sql: "PRAGMA user_version"))
 
@@ -25,7 +25,7 @@ public extension SQLite {
 		let execute = { (pointer: OpaquePointer, sql: String) in
 			var msg = UnsafeMutablePointer<Int8>(bitPattern: 0)
 			if sqlite3_exec(pointer, sql, nil, nil, &msg) != SQLITE_OK {
-				sqlite3_exec(pointer, "ROLLBACK TRANSACTION", nil, nil, nil) // explicitly cleanup the database; not needed, but nice to do
+				sqlite3_exec(pointer, "ROLLBACK TRANSACTION", nil, nil, nil) // explicitly cleanup the database; not required, but nice to do
 				fatalError(msg != nil ? String(cString: msg!) : "Unknown error")
 			}
 		}

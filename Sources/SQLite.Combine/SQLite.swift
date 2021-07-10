@@ -37,11 +37,10 @@ public final class SQLite: ObservableObject {
 	private var subscribers = NSMapTable<AnyObject, Change>.weakToStrongObjects()
 
 	func add(subscription: AnyObject, for stmt: OpaquePointer, explicit dependencies: [String]? = nil, _ callback: @escaping () -> Void) {
-		let tables = Set(dependencies ?? [ ]).union(
-			(0..<sqlite3_column_count(stmt)).lazy
+		let tables = Set(dependencies ?? [ ])
+			.union((0..<sqlite3_column_count(stmt)).lazy
 				.compactMap { sqlite3_column_table_name(stmt, $0) } // skips “expression or subquery” columns as they are not from a table
-				.map { String(cString: $0) }
-		)
+				.map { String(cString: $0) })
 
 		assert(Thread.isMainThread) // protects the subscribers NSMapTable
 		subscribers.setObject(Change(callback, dependencies: tables), forKey: subscription)
@@ -56,7 +55,8 @@ public final class SQLite: ObservableObject {
 // MARK: -
 	public required init(url: URL) {
 		var pointer: OpaquePointer! = nil
-		if sqlite3_open_v2(url.absoluteString, &pointer, SQLITE_OPEN_FULLMUTEX+SQLITE_OPEN_URI+SQLITE_OPEN_READWRITE+SQLITE_OPEN_CREATE, nil) != SQLITE_OK {
+		let flags = SQLITE_OPEN_FULLMUTEX+SQLITE_OPEN_URI+SQLITE_OPEN_READWRITE+SQLITE_OPEN_CREATE
+		if sqlite3_open_v2(url.absoluteString, &pointer, flags, nil) != SQLITE_OK {
 			fatalError(String(cString: sqlite3_errmsg(pointer)))
 		}
 
@@ -65,8 +65,9 @@ public final class SQLite: ObservableObject {
 		let context = unsafeBitCast(self, to: UnsafeMutableRawPointer.self)
 		sqlite3_update_hook(pointer, { (context, op, database, table, rowid) in
 			let `self` = unsafeBitCast(context, to: SQLite.self)
-//// We need to find a benchmark to determine if (when?) this is actually faster
-//			guard self.changes.contains(where: { $0.withCString { Darwin.strcmp($0, table) != 0 } }) == false else { // we avoid constructing the String in the common case
+//			// We need to find a benchmark to determine if (when?) this is actually faster
+//			guard self.changes.contains(where: { $0.withCString { Darwin.strcmp($0, table) != 0 } }) == false else {
+//				// we avoid constructing the String in the common case
 //				return // `changes` already contains `table`
 //			}
 
@@ -82,7 +83,7 @@ public final class SQLite: ObservableObject {
 			let `self` = unsafeBitCast(context, to: SQLite.self)
 			DispatchQueue.main.async { [weak self] in // delay the callback until afterward (in case the callback wants to touch the database)
 				if let self = self, let objectEnumerator = self.subscribers.objectEnumerator() {
-					self.sqlite_mutex { // we are now in the main queue but still need to mutex with the hook’s callbacks
+					self.sqlite_mutex { // we are in the main queue but still need to mutex with the hook’s callbacks
 						for object in objectEnumerator {
 							let change = object as! Change
 							if self.changes.isDisjoint(with: change.dependencies) == false {
